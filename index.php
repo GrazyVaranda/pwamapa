@@ -44,7 +44,7 @@
       const mapLink = document.getElementById('map-link');
       const installPwaButton = document.getElementById('installPwaWebAPP');
 
-   
+      let deferredPrompt;
       btnToggleDrawer.addEventListener('click', () => {
         drawer.classList.toggle('active');
       });
@@ -97,26 +97,26 @@
 
       findMeButton.addEventListener('click', geoFindMe);
 
-      let deferredPrompt;
+        /* Não estou conseguindo abrir meu projeto no vercel pois com a aplicação de baixar o webapp ele somente baixa no celular, mas não é suportado,então irei mandar as duas versões */
+      
+        //window.addEventListener('beforeinstallprompt', (e) => {
+        //e.preventDefault();
+        //deferredPrompt = e;
+        //installPwaButton.style.display = 'block';
+     // });
 
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installPwaButton.style.display = 'block';
-      });
-
-      installPwaButton.addEventListener('click', () => {
-        installPwaButton.style.display = 'none';
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('Usuário aceitou instalar o PWA');
-          } else {
-            console.log('Usuário rejeitou instalar o PWA');
-          }
-          deferredPrompt = null;
-        });
-      });
+     // installPwaButton.addEventListener('click', () => {
+        //installPwaButton.style.display = 'none';
+        //deferredPrompt.prompt();
+        //deferredPrompt.userChoice.then((choiceResult) => {
+          //if (choiceResult.outcome === 'accepted') {
+            //console.log('Usuário aceitou instalar o PWA');
+          //} else {
+            //console.log('Usuário rejeitou instalar o PWA');
+          //}
+          //deferredPrompt = null;
+        //});
+      //});
     });
 
     if ('serviceWorker' in navigator) {
