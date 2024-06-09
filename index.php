@@ -11,22 +11,21 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="./style/style.css">
+  
 </head>
 
 <body>
   <nav class="navbar">
     <button id="btnToggleDrawer" class="navbar-toggler">☰</button>
-    <a href="#" class="navbar-brand">Mapa</a>
-    <button id="installPwaWebAPP">Instalar Aplicativo</button>
-    <div id="user_identification_div">
-      <span>👤</span>
-      <a href="#">User Name</a>
     </div>
   </nav>
 
   <div id="drawerMenu" class="drawer">
     <h2>MENU PRINCIPAL</h2>
     <button onclick="geoFindMe()">Procurar sua localização</button>
+    <div class="drawer-footer">
+      <button id="btnCloseDrawer" class="btn btn-primary">Fechar</button>
+    </div>
   </div>
 
   <div class="container">
@@ -37,81 +36,100 @@
   </div>
 
   <script>
-    if ('serviceWorker' in navigator )=> {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./ServiceWorker.js').then(registration => {
-          console.log('ServiceWorker registrou: ', registration.scope);
-        }, err => {
-          console.log('ServiceWorker falhou : ', err);
+    document.addEventListener('DOMContentLoaded', () => {
+      const drawer = document.getElementById('drawerMenu');
+      const btnToggleDrawer = document.getElementById('btnToggleDrawer');
+      const findMeButton = document.getElementById('find-me');
+      const status = document.getElementById('status');
+      const mapLink = document.getElementById('map-link');
+      const installPwaButton = document.getElementById('installPwaWebAPP');
+
+   
+      btnToggleDrawer.addEventListener('click', () => {
+        drawer.classList.toggle('active');
+      });
+
+      btnCloseDrawer.addEventListener('click', () => {
+        drawer.classList.remove('active');
+      });
+      
+     document.addEventListener('click', (event) => {
+      const isClickInsideDrawer = drawer.contains(event.target);
+      const isClickOnToggle = btnToggleDrawer.contains(event.target);
+
+      if (!isClickInsideDrawer && !isClickOnToggle) {
+      drawer.classList.remove('active');
+        }
+      });
+    
+      function geoFindMe() {
+        mapLink.href = "";
+        mapLink.textContent = "";
+
+        function success(position) {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+
+          status.textContent = "";
+          mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
+          mapLink.textContent = `Latitude: ${latitude} ° , Longitude: ${longitude} °`;
+
+          var map = L.map('map').setView([latitude, longitude], 16);
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          }).addTo(map);
+
+          L.marker([latitude, longitude]).addTo(map);
+        }
+
+        function error() {
+          status.textContent = "Não foi possível acessar sua localização";
+        }
+
+        if (!navigator.geolocation) {
+          status.textContent = "Geolocalização não é suportada em seu navegador";
+        } else {
+          status.textContent = "Localizando...";
+          navigator.geolocation.getCurrentPosition(success, error);
+        }
+      }
+
+      findMeButton.addEventListener('click', geoFindMe);
+
+      let deferredPrompt;
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installPwaButton.style.display = 'block';
+      });
+
+      installPwaButton.addEventListener('click', () => {
+        installPwaButton.style.display = 'none';
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('Usuário aceitou instalar o PWA');
+          } else {
+            console.log('Usuário rejeitou instalar o PWA');
+          }
+          deferredPrompt = null;
         });
       });
-    }
-
-    let deferredPrompt;
-
-    window.addEventListener('beforeinstall', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('installPwa').style.display = 'block';
     });
 
-    document.getElementById('installPwa').addEventListener('click', (e) => {
-      document.getElementById('installPwa').style.display = 'none';
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('Usuário aceitou instalar o PWA');
-        } else {
-          console.log('Usuário rejeitou instalar o PWA');
-        }
-        deferredPrompt = null;
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./serviceWorker.js')
+          .then(registration => {
+            console.log('ServiceWorker registrado com sucesso:', registration.scope);
+          })
+          .catch(error => {
+            console.log('Falha ao registrar o ServiceWorker:', error);
+          });
       });
-    });
-
-    document.getElementById('btnToggleDrawer').addEventListener('click', function () {
-      var drawer = document.getElementById('drawerMenu');
-      if (drawer.classList.contains('active')) {
-        drawer.classList.remove('active');
-      } else {
-        drawer.classList.add('active');
-      }
-    });
-
-    function geoFindMe() {
-      const status = document.querySelector("#status");
-      const mapLink = document.querySelector("#map-link");
-
-      mapLink.href = "";
-      mapLink.textContent = "";
-
-      function success(position) {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-
-        status.textContent = "";
-        mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
-        mapLink.textContent = `Latitude: ${latitude} ° , Longitude: ${longitude} °`;
-        var map = L.map('map').setView([latitude, longitude], 16);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-        var marker = L.marker([latitude, longitude]).addTo(map);
-      }
-
-      function error() {
-        status.textContent = "Não foi possível acessar sua localização";
-      }
-
-      if (!navigator.geolocation) {
-        status.textContent = "Geolocalização não é suportada em seu navegador";
-      } else {
-        status.textContent = "Localizando...";
-        navigator.geolocation.getCurrentPosition(success, error);
-      }
     }
-
-    document.querySelector("#find-me").addEventListener("click", geoFindMe);
   </script>
 </body>
 
