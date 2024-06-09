@@ -116,7 +116,8 @@
           //}
           //deferredPrompt = null;
         //});
-      //});
+      ///});
+
     });
 
     if ('serviceWorker' in navigator) {
