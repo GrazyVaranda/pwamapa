@@ -95,6 +95,10 @@ body {
   margin-bottom: 30px; 
 }
 
+#map-link, #status {
+  color: white;
+}
+
 @media (max-width: 768px) {
   .drawer {
     width: 100%;
