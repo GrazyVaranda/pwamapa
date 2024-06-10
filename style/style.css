@@ -58,7 +58,7 @@ body {
 }
 
 #map {
-  flex: 1;
+  flex: 0;
   
 }
 
