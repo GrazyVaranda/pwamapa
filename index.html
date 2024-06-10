@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
+//Acho que nunca surtei tanto nas últimas madrugadas professor - Grazy
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +24,7 @@
     <h2>MENU PRINCIPAL</h2>
     <button onclick="geoFindMe()" class="btn btn-primary">Procurar sua localização</button>
     <div id="installPwaWebAPP">
-      <button class="btn btn-primary">Instalar Aplicativo</button>
+      <button id="installPwaButton" class="btn btn-primary">Instalar Aplicativo</button>
     </div>
     <div id="user_identification_div" class="btn btn-primary">
       <span>👤</span>
@@ -48,7 +50,7 @@
       const findMeButton = document.getElementById('find-me');
       const status = document.getElementById('status');
       const mapLink = document.getElementById('map-link');
-      const installPwaButton = document.getElementById('installPwaWebAPP');
+      const installPwaButton = document.getElementById('installPwaButton');
 
       let deferredPrompt;
 
@@ -110,7 +112,7 @@
         installPwaButton.style.display = 'block';
       });
 
-     installPwaButton.addEventListener('click', () => {
+      installPwaButton.addEventListener('click', () => {
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
