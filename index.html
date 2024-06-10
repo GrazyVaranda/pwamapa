@@ -110,12 +110,13 @@
         installPwaButton.style.display = 'block';
       });
 
-      installPwaButton.addEventListener('click', () => {
-        installPwaButton.style.display = 'none';
+     installPwaButton.addEventListener('click', () => {
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
             console.log('Usuário aceitou instalar o PWA');
+            installPwaButton.innerText = 'Instalado';
+            installPwaButton.disabled = true;
           } else {
             console.log('Usuário rejeitou instalar o PWA');
           }
