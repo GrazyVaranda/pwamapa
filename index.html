@@ -11,26 +11,23 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="./style/style.css">
-  
 </head>
 
 <body>
   <nav class="navbar">
     <button id="btnToggleDrawer" class="navbar-toggler">☰</button>
-    </div>
   </nav>
 
   <div id="drawerMenu" class="drawer">
     <h2>MENU PRINCIPAL</h2>
-    <button onclick="geoFindMe()">Procurar sua localização</button>
-<div id="installPwaWebAPP">
-        <button class="btn btn-primary">Instalar Aplicativo</button>
-      </div>
-      <div id="user_identification_div">
-        <span>👤</span>
-        <a href="#">User Name</a>
-      </div>
-
+    <button onclick="geoFindMe()" class="btn btn-primary">Procurar sua localização</button>
+    <div id="installPwaWebAPP">
+      <button class="btn btn-primary">Instalar Aplicativo</button>
+    </div>
+    <div id="user_identification_div" class="btn btn-primary">
+      <span>👤</span>
+      <a href="#">User Name</a>
+    </div>
     <div class="drawer-footer">
       <button id="btnCloseDrawer" class="btn btn-primary">Fechar</button>
     </div>
@@ -47,12 +44,14 @@
     document.addEventListener('DOMContentLoaded', () => {
       const drawer = document.getElementById('drawerMenu');
       const btnToggleDrawer = document.getElementById('btnToggleDrawer');
+      const btnCloseDrawer = document.getElementById('btnCloseDrawer');
       const findMeButton = document.getElementById('find-me');
       const status = document.getElementById('status');
       const mapLink = document.getElementById('map-link');
       const installPwaButton = document.getElementById('installPwaWebAPP');
 
       let deferredPrompt;
+
       btnToggleDrawer.addEventListener('click', () => {
         drawer.classList.toggle('active');
       });
@@ -60,16 +59,16 @@
       btnCloseDrawer.addEventListener('click', () => {
         drawer.classList.remove('active');
       });
-      
-     document.addEventListener('click', (event) => {
-      const isClickInsideDrawer = drawer.contains(event.target);
-      const isClickOnToggle = btnToggleDrawer.contains(event.target);
 
-      if (!isClickInsideDrawer && !isClickOnToggle) {
-      drawer.classList.remove('active');
+      document.addEventListener('click', (event) => {
+        const isClickInsideDrawer = drawer.contains(event.target);
+        const isClickOnToggle = btnToggleDrawer.contains(event.target);
+
+        if (!isClickInsideDrawer && !isClickOnToggle) {
+          drawer.classList.remove('active');
         }
       });
-    
+
       function geoFindMe() {
         mapLink.href = "";
         mapLink.textContent = "";
@@ -80,7 +79,7 @@
 
           status.textContent = "";
           mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
-          mapLink.textContent = `Latitude: ${latitude} ° , Longitude: ${longitude} °`;
+          mapLink.textContent = `Latitude: ${latitude}°, Longitude: ${longitude}°`;
 
           var map = L.map('map').setView([latitude, longitude], 16);
           L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -105,8 +104,7 @@
 
       findMeButton.addEventListener('click', geoFindMe);
 
-      
-        window.addEventListener('beforeinstallprompt', (e) => {
+      window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
         installPwaButton.style.display = 'block';
@@ -124,7 +122,6 @@
           deferredPrompt = null;
         });
       });
-
     });
 
     if ('serviceWorker' in navigator) {
