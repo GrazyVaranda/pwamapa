@@ -96,6 +96,20 @@ body {
   margin-bottom: 30px;
 }
 
+.installPwaButton{
+  display: inline-block;
+  padding: 10px 20px;
+  margin-top: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
 #map-link, #status {
   color: black;
 }
